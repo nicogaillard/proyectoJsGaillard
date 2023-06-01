@@ -7,13 +7,24 @@ let valor
 
 
 
-//
+//"Logueo" del usuario que determina si puede acceder al menú
 nombreUsuario = prompt("Ingrese su nombre")
 apellidoUsuario = prompt("Ahora ingrese su apellido")
-console.log(nombreUsuario)
-console.log(apellidoUsuario)
 
+// Condicional respecto al "Logueo" anterior para acceder al menú
 if (((nombreUsuario != "") && (apellidoUsuario != "")) && ((nombreUsuario != null) && (apellidoUsuario != null))){
+    alert(`Bienvenido ${nombreUsuario} ${apellidoUsuario} a la tienda de componentes de PC.
+    A continuación le mostraremos una serie de opciones enumeradas.`)
+    //llamado a la función menú
+    menu()
+}else {
+    alert("No ingresó correctamente Nombre y/o Apellido, vuelva a intentarlo.")
+}
+
+
+//Funcion menú
+
+function menu() {
     valor = prompt(`Ingrese un número según la opción a la que desee ingresar:
     1. Lista de componentes
     2. Estimador de costos
@@ -23,7 +34,7 @@ if (((nombreUsuario != "") && (apellidoUsuario != "")) && ((nombreUsuario != nul
     while (valor != "ESC") {
         switch (valor) {
             case "1":
-                alert("El producto seleccionado es TOMATE")
+                alert(`Mother Asus `)
             break
             case "2":
                 alert("El producto seleccionado es PAPA")
@@ -33,25 +44,17 @@ if (((nombreUsuario != "") && (apellidoUsuario != "")) && ((nombreUsuario != nul
             break
             case "0":
                 valor = "ESC"
-            break
             default:
                 alert("ERROR, ingrese un número según corresponda")
             break
         }
-        // valor = prompt(`Ingrese un número según la opción a la que desee ingresar:
-        // 1. Lista de componentes
-        // 2. Estimador de costos
-        // 3. Información extra
-        // 0. Salir del Menú`)
+        valor = prompt(`Ingrese un número según la opción a la que desee ingresar:
+        1. Lista de componentes
+        2. Estimador de costos
+        3. Información extra
+        0. Salir del Menú`)
     }
-}else {
-    alert("No ingresó correctamente Nombre y/o Apellido, vuelva a intentarlo.")
 }
-
-
-
-
-
 
 
 
