@@ -1,0 +1,19 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.boton {
+    border: solid 2px rgb(245, 227, 66);
+    background-color: rgb(199, 199, 199);
+    font-size: 1rem;
+    color: black;
+    transition-duration: 0.4s;
+}
+
+.boton:hover {
+    border: rgb(199, 199, 199);
+    background-color:  rgb(245, 227, 66);
+    font-size: 1.5rem;
+}
