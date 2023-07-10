@@ -4,16 +4,54 @@
     box-sizing: border-box;
 }
 
-.boton {
-    border: solid 2px rgb(245, 227, 66);
-    background-color: rgb(199, 199, 199);
-    font-size: 1rem;
+a {
+    text-decoration: none;
     color: black;
-    transition-duration: 0.4s;
 }
 
-.boton:hover {
-    border: rgb(199, 199, 199);
-    background-color:  rgb(245, 227, 66);
-    font-size: 1.5rem;
+.header {
+    display: flex;
+    align-items: end;
+}
+
+.titulo {
+display: flex;
+flex-flow: row nowrap;
+justify-content: space-between;
+align-items: center;
+}
+
+.titulo h1:hover {
+    font-size: 2.55rem;
+}
+
+.main {
+    margin-top: 15px;
+}
+
+.catalogo {
+    margin: 5px;
+    margin-top: 15px;
+    margin-left: 0px;
+    padding: 0px;
+    gap: 30px;
+}
+
+.btnCarrito {
+    position: fixed;
+    width: 45px;
+    height: 45px;
+    line-height: 30px;
+    bottom: 30px;
+    right: 30px;
+    color: black;
+    background-color: yellow;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btnCarrito:hover {
+    transform: scale(1.15, 1.15);
 }

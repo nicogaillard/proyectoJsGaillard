@@ -1,6 +1,5 @@
-//Declarando variables
-let nombreUsuario
-let apellidoUsuario
+//Archivo Main JS donde desarrollo el código de mi sitio
+//El archivo backups era el anterior Main hasta la entrega sin el uso de DOM en adelante
 
 //class constructora de objetos pc
 class Componente {
@@ -10,9 +9,18 @@ class Componente {
             this.marca = marca,
             this.nombre = nombre,
             this.precio = precio
+            this.cantidad = 1 
     }
     mostrarInfoComp() {
         console.log(`Este componente es de la categoría ${this.categoria}, es fabricado por la marca ${this.marca}, su nombre es ${this.nombre} y su precio es de $${this.precio}`)
+    }
+    sumarUnidad() {
+        this.cantidad = this.cantidad + 1
+        return this.cantidad
+    }
+    restarUnidad() {
+        this.cantidad = this.cantidad - 1
+        return this.cantidad
     }
 }
 //Creando objetos
@@ -26,74 +34,70 @@ const componente6 = new Componente(6, "Disco Duro", "Western Digital", "1TB WD B
 //Creando el Array para los Componentes como Productos
 const productos = [componente1, componente2, componente3, componente4, componente5, componente6]
 
-//funcion agregar producto
-function agregarProducto() {
-    let categoriaIngresada = prompt("Ingrese la Categoria del producto")
-    let marcaIngresada = prompt("Ingrese la Marca del producto")
-    let nombreIngresado = prompt("Ingrese el Nombre del Producto")
-    let precioIngresado = parseInt(prompt("Ingrese el Precio del Producto"))
-    //Creando el objeto con los valores ingresados
-    const componenteNuevo = new Componente(productos.length + 1, categoriaIngresada, marcaIngresada, nombreIngresado, precioIngresado)
-    componenteNuevo.mostrarInfoComp()
-    console.log(componenteNuevo)
-    //Agregando el objeto al array
-    productos.push(componenteNuevo)
-    console.log(productos)
+const busquedaProductos = [].concat(productos)
+
+let carrito
+
+
+
+//Declarando elementos del DOM capturados
+let botonBuscar = document.getElementById("botonBuscar")
+let inputBuscar = document.getElementById("inputBuscar")
+let catalogo = document.getElementById("catalogo")
+let btnRadio1 = document.getElementById("btnradio1")
+let btnRadio2 = document.getElementById("btnradio2")
+let btnRadio3 = document.getElementById("btnradio3")
+let btnCarrito = document.getElementById("btnCarrito")
+let modalBody = document.getElementById("modal-body")
+let precioTotal = document.getElementById("precioTotal")
+
+//Aplicando Evento Click al Buscador
+botonBuscar.onclick = (e) => {
+    e.preventDefault()
+    buscarProducto(busquedaProductos)
 }
 
-//Funcion para recorrer el catalogo e imprimirlo en consola
-function verCatalogo(array) {
-    console.log("Nuestros productos son:")
-    for (let elemento of array) {
-        console.log(elemento.id, elemento.categoria, elemento.marca, elemento.nombre, elemento.precio)
-    }
-}
+//Evento Click para ordenar de menor a mayor
+btnRadio1.addEventListener("click", () => {
+    ordMenorMayor(busquedaProductos)
+})
 
-//Funcion para buscar en el catalogo con el metodo find 
-function buscarPorMarca(array) {
-    let marcaBuscada = prompt(`Ingrese el nombre de la marca que desea buscar`)
-    let busqueda = array.find(
-        (elemento) => elemento.marca.toLowerCase() === marcaBuscada.toLowerCase()
-    )
-    if (busqueda == undefined) {
-        console.log(`La marca ${marcaBuscada} no se encuentra en nuestro catálogo`)
-    } else {
-        console.log(busqueda)
-    }
-}
+//Evento Click para ordenar de Mayor a menor
+btnRadio2.addEventListener("click", () => {
+    ordMayorMenor(busquedaProductos)
+})
+
+btnRadio3.addEventListener("click", () => {
+    ordAlfabeticamente(busquedaProductos)
+})
+//Evento click para el carrito
+btnCarrito.addEventListener("click", () => {
+    mostrarProductoCarrito(carrito)
+})
 
 //Funcion para buscar en el catalogo con el metodo filter
-function buscarPorCategoria(array) {
-    let categoriaBusqueda = prompt("Ingrese la categoria de los productos que está buscando")
+function buscarProducto(array) {
+    catalogo.innerHTML = ``
     let busqueda = array.filter(
-        (elemento) => elemento.categoria.toLowerCase() === categoriaBusqueda.toLowerCase()
-    )
-    if (busqueda.length == 0) {
-        console.log(`Para la categoría ${categoriaBusqueda} no hay coincidencias en nuestro catalogo`)
-    } else {
-        verCatalogo(busqueda)
+        (elemento) => elemento.nombre.toLowerCase().includes(inputBuscar.value.toLowerCase()) || elemento.marca.toLowerCase().includes(inputBuscar.value.toLowerCase()))
+        busqueda.length == 0 ? alert(`No se pudo encontrar ${inputBuscar.value}`) : mostrarCatalogo(busqueda)
     }
-}
 
-//Ordenar de Menor a Mayor por los precios
-function ordMenorMayor(array) {
-    const menorMayor = [].concat(array)
-    console.log(menorMayor)
-    menorMayor.sort((a, b) => a.precio - b.precio)
-    verCatalogo(menorMayor)
-}
-
-//Ordenar de Mayor a Menor por los precios
-function ordMayorMenor(array) {
-    const mayorMenor = [].concat(array)
-    mayorMenor.sort((a, b) => b.precio - a.precio)
-    verCatalogo(mayorMenor)
-}
+    //Ordenar de Menor a Mayor por los precios
+    function ordMenorMayor(array) {
+        array.sort((a, b) => a.precio - b.precio)
+        mostrarCatalogo(array)
+    }
+    
+    //Ordenar de Mayor a Menor por los precios
+    function ordMayorMenor(array) {
+        array.sort((a, b) => b.precio - a.precio)
+        mostrarCatalogo(array)
+    }
 
 //Ordenar alfabeticamente por las marcas
 function ordAlfabeticamente(array) {
-    const arrayAlfabetico = [].concat(array)
-    arrayAlfabetico.sort((a, b) => {
+    array.sort((a, b) => {
         if (a.marca > b.marca) {
             return 1
         }
@@ -102,86 +106,86 @@ function ordAlfabeticamente(array) {
         }
         return 0
     })
-    verCatalogo(arrayAlfabetico)
+    mostrarCatalogo(array)
 }
 
-function ordCatalogo() {
-    let opcion = parseInt(prompt(`
-    1 - Ordenar de menor a mayor
-    2 - Ordenar de mayor a menor
-    3 - Ordenar alfabeticamente por la marca del producto`))
-    switch (opcion) {
-        case 1:
-            ordMenorMayor(productos)
-            break
-        case 2:
-            ordMayorMenor(productos)
-            break
-        case 3:
-            ordAlfabeticamente(productos)
-            break
-        default:
-            console.log(`La opcion ${opcion} no es válida`)
-            break
+
+
+//Funcion agregar al carrito
+function agregarAlCarrito(producto) {
+    let productoAgregado = carrito.find((el) => el.id == producto.id)
+    if (productoAgregado == undefined) {
+        carrito.push(producto)
+        localStorage.setItem("carrito", JSON.stringify(carrito))
+    } else { console.log("ya existe el producto en el carrito") }
+    console.log(carrito)
+}
+
+//
+if (localStorage.getItem("carrito")) {
+    carrito = JSON.parse(localStorage.getItem("carrito"))
+} else {
+    carrito = []
+    localStorage.setItem("carrito", carrito)
+}
+
+function mostrarProductoCarrito(array) {
+    modalBody.innerHTML = ``
+    //imprime los productos agregados al carrito
+    array.forEach((productoCarrito) => {
+        modalBody.innerHTML += `<div class="card border-primary mb-3" id ="productoCarrito${productoCarrito.id}" style="max-width: 540px;">
+        <img class="card-img-top" height="300px" src="" alt="">
+        <div class="card-body">
+            <h4 class="card-title">${productoCarrito.nombre}</h4>
+            <p class="card-text">${productoCarrito.marca}</p>
+                <p class="card-text">$${productoCarrito.precio}</p> 
+                <button class="btn btn-danger" id="botonEliminar${productoCarrito.id}">
+                Borrar
+                </button>
+        </div>    
+    </div>`
+    })
+    array.forEach((productoCarrito) => {
+        document.getElementById(`botonEliminar${productoCarrito.id}`).addEventListener("click", () => {
+            let productoBorrado = document.getElementById(`productoCarrito${productoCarrito.id}`)
+            productoBorrado.remove()
+            let productoEliminar = array.find((producto) => producto.id == productoCarrito.id)
+            let posicion = array.indexOf(productoEliminar)
+            array.splice(posicion,1)
+            localStorage.setItem("carrito", JSON.stringify(array))
+        })
+    })
+    calcularTotal(carrito)
+    //
+}
+
+function calcularTotal(array){
+    let sumaTotal = array.reduce((acc, producto)=> acc + producto.precio * producto.cantidad , 0)
+    sumaTotal == 0 ? precioTotal.innerHTML = `No hay productos en el carrito` : precioTotal.innerHTML = `El total es: <strong>$${sumaTotal}</strong> `
+}
+
+//mostrando el catalogo de componentes
+function mostrarCatalogo(array) {
+    catalogo.innerHTML = ``
+    for (let producto of array) {
+        let nuevoProducto = document.createElement("div")
+        nuevoProducto.className = "col-12 col-md-6 col-lg-3 my-2"
+        nuevoProducto.innerHTML = `<div id="${producto.id}" class="card" style="width: 18rem;">
+<img src="..." class="card-img-top" alt="...">
+<div class="card-body">
+<h5 class="card-title">${producto.nombre}</h5>
+<h6 class="card-title">$${producto.precio}</h6>
+<p class="card-text">${producto.marca}</p>
+<button id="btnAgregar${producto.id}" class="btn btn-primary">Añadir al Carro</button>
+</div>
+</div>`
+        catalogo.appendChild(nuevoProducto)
+
+        let btnAgregarCarrito = document.getElementById(`btnAgregar${producto.id}`)
+        // console.log(btnAgregarCarrito)
+        btnAgregarCarrito.addEventListener("click", function () {
+            agregarAlCarrito(producto)
+        })
     }
 }
-
-//"Logueo" del usuario que determina si puede acceder al menú
-logueo()
-function logueo() {
-    nombreUsuario = prompt("Ingrese su nombre")
-    apellidoUsuario = prompt("Ahora ingrese su apellido")
-    // Condicional respecto al "Logueo" anterior para acceder al menú
-    if (((nombreUsuario != "" && apellidoUsuario != "") && (nombreUsuario != null && apellidoUsuario != null)) && (isNaN(nombreUsuario) && isNaN(apellidoUsuario))) {
-        alert(`Bienvenido ${nombreUsuario} ${apellidoUsuario} a la tienda de componentes de PC.
-A continuación le mostraremos una serie de opciones enumeradas.`)
-        //llamado a la función menú
-        menu()
-    } else {
-        alert("No ingresó correctamente Nombre y/o Apellido, vuelva a intentarlo.")
-        //Llamado a funcion logueo para reingresar nombre y apellido
-        logueo()
-    }
-}
-
-//Funcion menú
-function menu() {
-    valor = prompt(`Ingrese un número según la opción a la que desee ingresar:
-    1. Lista de componentes
-    2. Agregar un componente
-    3. Buscar por marca
-    4. Buscar por categoria
-    5. Ordenar el catálogo
-    0. Salir del Menú`)
-
-    while (valor != "0") {
-        switch (valor) {
-            case "1":
-                verCatalogo(productos)
-                break
-            case "2":
-                agregarProducto()
-                break
-            case "3":
-                buscarPorMarca(productos)
-                break
-            case "4":
-                buscarPorCategoria(productos)
-                break
-            case "5":
-                ordCatalogo()
-                break
-            default:
-                alert("ERROR, ingrese un número según corresponda")
-                break
-        }
-        valor = prompt(`Ingrese un número según la opción a la que desee ingresar:
-        1. Lista de componentes
-        2. Agregar un componente
-        3. Buscar por marca
-        4. Buscar por categoria
-        5. Ordenar catálogo
-        0. Salir del Menú`)
-    }
-    alert("Gracias por visitar nuestro sitio.")
-}
+mostrarCatalogo(productos)
