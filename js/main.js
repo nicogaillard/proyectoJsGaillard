@@ -9,7 +9,7 @@ class Componente {
             this.marca = marca,
             this.nombre = nombre,
             this.precio = precio
-            this.cantidad = 1 
+        this.cantidad = 1
     }
     mostrarInfoComp() {
         console.log(`Este componente es de la categoría ${this.categoria}, es fabricado por la marca ${this.marca}, su nombre es ${this.nombre} y su precio es de $${this.precio}`)
@@ -36,7 +36,7 @@ const productos = [componente1, componente2, componente3, componente4, component
 
 const busquedaProductos = [].concat(productos)
 
-let carrito
+let carrito = []
 
 
 
@@ -80,20 +80,20 @@ function buscarProducto(array) {
     catalogo.innerHTML = ``
     let busqueda = array.filter(
         (elemento) => elemento.nombre.toLowerCase().includes(inputBuscar.value.toLowerCase()) || elemento.marca.toLowerCase().includes(inputBuscar.value.toLowerCase()))
-        busqueda.length == 0 ? alert(`No se pudo encontrar ${inputBuscar.value}`) : mostrarCatalogo(busqueda)
-    }
+    busqueda.length == 0 ? alert(`No se pudo encontrar ${inputBuscar.value}`) : mostrarCatalogo(busqueda)
+}
 
-    //Ordenar de Menor a Mayor por los precios
-    function ordMenorMayor(array) {
-        array.sort((a, b) => a.precio - b.precio)
-        mostrarCatalogo(array)
-    }
-    
-    //Ordenar de Mayor a Menor por los precios
-    function ordMayorMenor(array) {
-        array.sort((a, b) => b.precio - a.precio)
-        mostrarCatalogo(array)
-    }
+//Ordenar de Menor a Mayor por los precios
+function ordMenorMayor(array) {
+    array.sort((a, b) => a.precio - b.precio)
+    mostrarCatalogo(array)
+}
+
+//Ordenar de Mayor a Menor por los precios
+function ordMayorMenor(array) {
+    array.sort((a, b) => b.precio - a.precio)
+    mostrarCatalogo(array)
+}
 
 //Ordenar alfabeticamente por las marcas
 function ordAlfabeticamente(array) {
@@ -117,13 +117,20 @@ function agregarAlCarrito(producto) {
     if (productoAgregado == undefined) {
         carrito.push(producto)
         localStorage.setItem("carrito", JSON.stringify(carrito))
-    } else { console.log("ya existe el producto en el carrito") }
+    } else { console.log("ya existe el producto en el carrito") 
+    let productoSuma = carrito.find((el)=> el.id == producto.id)
+    console.log(`Se suma una unidad de ${productoSuma.nombre}`)
+    productoSuma.sumarUnidad()
+}
     console.log(carrito)
 }
 
 //
 if (localStorage.getItem("carrito")) {
-    carrito = JSON.parse(localStorage.getItem("carrito"))
+    for (let producto of JSON.parse(localStorage.getItem("carrito"))){
+        let productoStorage = new Componente(producto.cantidad, producto.id, producto.nombre, producto.marca, producto.precio)
+        carrito.push(productoStorage)
+    }
 } else {
     carrito = []
     localStorage.setItem("carrito", carrito)
@@ -138,7 +145,12 @@ function mostrarProductoCarrito(array) {
         <div class="card-body">
             <h4 class="card-title">${productoCarrito.nombre}</h4>
             <p class="card-text">${productoCarrito.marca}</p>
-                <p class="card-text">$${productoCarrito.precio}</p> 
+                <p class="card-text">$${productoCarrito.precio}</p>
+                <p class="card-text">Precio unitario $${productoCarrito.precio}</p>
+                <p class="card-text">Total de unidades ${productoCarrito.cantidad}</p> 
+                <p class="card-text">SubTotal ${productoCarrito.cantidad * productoCarrito.precio}</p>   
+                <button class= "btn btn-success" id="botonSumarUnidad${productoCarrito.id}"><i class=""></i>+1</button>
+                <button class= "btn btn-danger" id="botonEliminarUnidad${productoCarrito.id}"><i class=""></i>-1</button>
                 <button class="btn btn-danger" id="botonEliminar${productoCarrito.id}">
                 Borrar
                 </button>
@@ -146,21 +158,50 @@ function mostrarProductoCarrito(array) {
     </div>`
     })
     array.forEach((productoCarrito) => {
+        //evento para sumar unidad
+        document.getElementById(`botonSumarUnidad${productoCarrito.id}`).addEventListener("click", () => {
+            console.log(`Se suma una unidad de ${productoCarrito.nombre}`)
+            productoCarrito.sumarUnidad()
+            localStorage.setItem("carrito", JSON.stringify(array))
+            mostrarProductoCarrito(array)
+        })
+        //EVENTO PARA RESTAR UNA UNIDAD
+        document.getElementById(`botonEliminarUnidad${productoCarrito.id}`).addEventListener("click", () => {
+            let cantProd = productoCarrito.restarUnidad()
+            console.log(cantProd)
+            if (cantProd < 1) {
+                let cardProducto = document.getElementById(`productoCarrito${productoCarrito.id}`)
+                cardProducto.remove()
+                let productoEliminar = array.find((producto) => producto.id == productoCarrito.id)
+                let posicion = array.indexOf(productoEliminar)
+                array.splice(posicion, 1)
+                localStorage.setItem("carrito", JSON.stringify(array))
+                console.log(`Se quita del carrito ${productoCarrito.nombre}`)
+                calcularTotal(array)
+            }
+            else {
+                localStorage.setItem("carrito", JSON.stringify(array))
+                console.log(`Se resta una unidad de ${productoCarrito.nombre}`)
+            }
+            mostrarProductoCarrito(array)
+        })
         document.getElementById(`botonEliminar${productoCarrito.id}`).addEventListener("click", () => {
-            let productoBorrado = document.getElementById(`productoCarrito${productoCarrito.id}`)
-            productoBorrado.remove()
+            console.log(`Eliminar producto`)
+            let cardProducto = document.getElementById(`productoCarrito${productoCarrito.id}`)
+            cardProducto.remove()
             let productoEliminar = array.find((producto) => producto.id == productoCarrito.id)
             let posicion = array.indexOf(productoEliminar)
-            array.splice(posicion,1)
+            array.splice(posicion, 1)
             localStorage.setItem("carrito", JSON.stringify(array))
+            calcularTotal(array)
         })
     })
-    calcularTotal(carrito)
-    //
+    calcularTotal(array)
+
 }
 
-function calcularTotal(array){
-    let sumaTotal = array.reduce((acc, producto)=> acc + producto.precio * producto.cantidad , 0)
+function calcularTotal(array) {
+    let sumaTotal = array.reduce((acc, producto) => acc + producto.precio * producto.cantidad, 0)
     sumaTotal == 0 ? precioTotal.innerHTML = `No hay productos en el carrito` : precioTotal.innerHTML = `El total es: <strong>$${sumaTotal}</strong> `
 }
 
