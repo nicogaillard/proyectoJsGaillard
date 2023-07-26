@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "categoria": "Procesador",
+        "marca": "Intel",
+        "nombre": "i5-7400",
+        "precio": 72000
+    },
+    {
+        "id": 2,
+        "categoria": "Placa Madre",
+        "marca": "MSI",
+        "nombre": "H-310M PRO VDH PLUS",
+        "precio": 56000
+    },
+    {
+        "id": 3,
+        "categoria": "Memoria RAM",
+        "marca": "HyperX",
+        "nombre": "8gb ddr4 3200hz",
+        "precio": 18000
+    },
+    {
+        "id": 4,
+        "categoria": "Fuente",
+        "marca": "Asus",
+        "nombre": "MAG 500W Reales",
+        "precio": 45000
+    },
+    {
+        "id": 5,
+        "categoria": "Placa de Video",
+        "marca": "Asus",
+        "nombre": "GTX 1060 6gb",
+        "precio": 67500
+    },
+    {
+        "id" : 6,
+        "categoria" : "Disco Duro",
+        "marca" : "Western Digital",
+        "nombre" : "1TB WD Blue",
+        "precio" : 32000
+    }
+]

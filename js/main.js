@@ -23,22 +23,13 @@ class Componente {
         return this.cantidad
     }
 }
-//Creando objetos
-const componente1 = new Componente(1, "Procesador", "Intel", "i5-7400", 72000)
-const componente2 = new Componente(2, "Placa Madre", "MSI", "H-310M PRO VDH PLUS", 56000)
-const componente3 = new Componente(3, "Memoria RAM", "HyperX", "8gb ddr4 3200hz", 18000)
-const componente4 = new Componente(4, "Fuente", "Asus", "MAG 500W Reales", 45000)
-const componente5 = new Componente(5, "Placa de Video", "Asus", "GTX 1060 6gb", 67500)
-const componente6 = new Componente(6, "Disco Duro", "Western Digital", "1TB WD Blue", 32000)
 
 //Creando el Array para los Componentes como Productos
-const productos = [componente1, componente2, componente3, componente4, componente5, componente6]
+let productos = []
 
 const busquedaProductos = [].concat(productos)
 
 let carrito = []
-
-
 
 //Declarando elementos del DOM capturados
 let botonBuscar = document.getElementById("botonBuscar")
@@ -50,6 +41,27 @@ let btnRadio3 = document.getElementById("btnradio3")
 let btnCarrito = document.getElementById("btnCarrito")
 let modalBody = document.getElementById("modal-body")
 let precioTotal = document.getElementById("precioTotal")
+
+//peticion de la API local de productos metodo async- await
+const crearProductos = async () => {
+    const res = await fetch("./js/productos.json")
+    const info = await res.json()
+
+    for(let componente of info){
+        let componenteInfo = new Componente(componente.id, componente.categoria, componente.marca, componente.nombre, componente.precio)
+        productos.push(componenteInfo)
+    }
+    localStorage.setItem("productos", JSON.stringify(productos))
+    mostrarCatalogo(productos)
+}    
+
+if(localStorage.getItem("productos")){
+    productos = JSON.parse(localStorage.getItem("productos"))
+    mostrarCatalogo(productos)
+}else {
+    crearProductos()
+}    
+
 
 //Aplicando Evento Click al Buscador
 botonBuscar.onclick = (e) => {
@@ -229,4 +241,3 @@ function mostrarCatalogo(array) {
         })
     }
 }
-mostrarCatalogo(productos)
