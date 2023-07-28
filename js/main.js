@@ -31,6 +31,7 @@ const busquedaProductos = [].concat(productos)
 
 let carrito = []
 
+
 //Declarando elementos del DOM capturados
 let botonBuscar = document.getElementById("botonBuscar")
 let inputBuscar = document.getElementById("inputBuscar")
@@ -41,26 +42,27 @@ let btnRadio3 = document.getElementById("btnradio3")
 let btnCarrito = document.getElementById("btnCarrito")
 let modalBody = document.getElementById("modal-body")
 let precioTotal = document.getElementById("precioTotal")
+let btnComprar = document.getElementById("btnComprar")
 
 //peticion de la API local de productos metodo async- await
 const crearProductos = async () => {
     const res = await fetch("./js/productos.json")
     const info = await res.json()
 
-    for(let componente of info){
+    for (let componente of info) {
         let componenteInfo = new Componente(componente.id, componente.categoria, componente.marca, componente.nombre, componente.precio)
         productos.push(componenteInfo)
     }
     localStorage.setItem("productos", JSON.stringify(productos))
     mostrarCatalogo(productos)
-}    
+}
 
-if(localStorage.getItem("productos")){
+if (localStorage.getItem("productos")) {
     productos = JSON.parse(localStorage.getItem("productos"))
     mostrarCatalogo(productos)
-}else {
+} else {
     crearProductos()
-}    
+}
 
 
 //Aplicando Evento Click al Buscador
@@ -85,6 +87,11 @@ btnRadio3.addEventListener("click", () => {
 //Evento click para el carrito
 btnCarrito.addEventListener("click", () => {
     mostrarProductoCarrito(carrito)
+})
+
+//Evento para finalizar la compra
+btnComprar.addEventListener("click", () => {
+    finalizarCompra()
 })
 
 //Funcion para buscar en el catalogo con el metodo filter
@@ -129,23 +136,54 @@ function agregarAlCarrito(producto) {
     if (productoAgregado == undefined) {
         carrito.push(producto)
         localStorage.setItem("carrito", JSON.stringify(carrito))
-    } else { console.log("ya existe el producto en el carrito") 
-    let productoSuma = carrito.find((el)=> el.id == producto.id)
-    console.log(`Se suma una unidad de ${productoSuma.nombre}`)
-    productoSuma.sumarUnidad()
-}
+    } else {
+        console.log("ya existe el producto en el carrito")
+        let productoSuma = carrito.find((el) => el.id == producto.id)
+        console.log(`Se suma una unidad de ${productoSuma.nombre}`)
+        productoSuma.sumarUnidad()
+    }
     console.log(carrito)
 }
 
-//
-if (localStorage.getItem("carrito")) {
-    for (let producto of JSON.parse(localStorage.getItem("carrito"))){
-        let productoStorage = new Componente(producto.cantidad, producto.id, producto.nombre, producto.marca, producto.precio)
-        carrito.push(productoStorage)
+//creando el storage para el carrito
+    if (localStorage.getItem("carrito")) {
+        for (let producto of JSON.parse(localStorage.getItem("carrito"))) {
+            let productoStorage = new Componente(producto.cantidad, producto.id, producto.nombre, producto.marca, producto.precio)
+            carrito.push(productoStorage)
+        }
+    } else {
+        carrito = []
+        localStorage.setItem("carrito", carrito)
     }
-} else {
-    carrito = []
-    localStorage.setItem("carrito", carrito)
+
+
+function finalizarCompra() {
+    modalBody.innerHTML = ""
+    if (carrito.length > 0) {
+        swal({
+            icon: 'success',
+            title: 'Compra realizada con exito',
+            text: 'Muchas gracias por elegirnos'
+        })
+        carrito = []
+        localStorage.removeItem("carrito")
+    } else {
+        swal({
+            icon: 'warning',
+            title: 'No se pudo realizar la compra',
+            text: 'No se pudo realizar la compra porque el carrito se encuentra vacío'
+        })
+    }
+
+    if (localStorage.getItem("carrito")) {
+        for (let producto of JSON.parse(localStorage.getItem("carrito"))) {
+            let productoStorage = new Componente(producto.cantidad, producto.id, producto.nombre, producto.marca, producto.precio)
+            return carrito.push(productoStorage)
+        }
+    } else {
+        carrito = []
+        return localStorage.setItem("carrito", carrito)
+    }
 }
 
 function mostrarProductoCarrito(array) {
